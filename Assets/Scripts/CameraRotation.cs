@@ -11,8 +11,6 @@ public class CameraRotation : MonoBehaviour
 
     private const float MAX_VERTICAL_ANGLE = 90f;
     private const float MAX_HORIZONTAL_ANGLE = 90f;
-    float inputX ;
-    float inputY ;
     void Start()
     {
         
@@ -23,8 +21,8 @@ public class CameraRotation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        inputX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
-        inputY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
+        float inputX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
+        float inputY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
 
         _verticalRotation -= inputY;
         _horizontRotation += inputX;
