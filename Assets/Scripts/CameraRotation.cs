@@ -18,7 +18,6 @@ public class CameraRotation : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked; 
     }
 
-    // Update is called once per frame
     void Update()
     {
         float inputX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
