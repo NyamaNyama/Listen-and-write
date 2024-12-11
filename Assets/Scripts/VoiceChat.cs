@@ -7,7 +7,6 @@ using System.IO;
 using UnityEngine;
 
 public class VoiceChat : NetworkBehaviour
-
 {
     private const int SAMPLE_RATE = 44100;
     private const int RECORD_DURATION = 1;
@@ -15,7 +14,6 @@ public class VoiceChat : NetworkBehaviour
     private AudioSource _audioSource;
     private AudioClip _audioClip;
     private int _lastSamplePosition;
-    float _recordingLength;
 
     void Start()
     {
@@ -25,10 +23,7 @@ public class VoiceChat : NetworkBehaviour
     private void Update()
     {
         if (!isLocalPlayer) return;
-        if (isRecording)
-        {
-            SendAudio();
-        }
+        
         if (Input.GetKeyDown(KeyCode.E)) 
         {
             StartRecord();
@@ -36,9 +31,13 @@ public class VoiceChat : NetworkBehaviour
 
         if(Input.GetKeyUp(KeyCode.E))
         {
-            StopRecord();
+            StartCoroutine( StopRecord());
         }
-        
+        if (isRecording)
+        {
+            SendAudio();
+        }
+
     }
 
     private void StartRecord()
@@ -50,8 +49,10 @@ public class VoiceChat : NetworkBehaviour
 
 
 
-    private void StopRecord() 
+    private IEnumerator StopRecord() 
     {
+        yield return new WaitForSeconds(0.1f);
+        SendAudio();
         Microphone.End(null);
         isRecording= false;
     }
