@@ -14,51 +14,65 @@ public class VoiceChat : NetworkBehaviour
     private AudioSource _audioSource;
     private AudioClip _audioClip;
     private int _lastSamplePosition;
+    private Coroutine _lastAudioSend;
+
 
     void Start()
     {
-        _audioSource = GetComponent<AudioSource>();  
+        _audioSource = GetComponent<AudioSource>();
+        if (!isLocalPlayer) return;
+        _audioClip = Microphone.Start(null, false, RECORD_DURATION * 310, SAMPLE_RATE);
     }
 
     private void Update()
-    {
+    {   
         if (!isLocalPlayer) return;
         
         if (Input.GetKeyDown(KeyCode.E)) 
         {
-            StartRecord();
+            if (_lastAudioSend != null)
+            {
+                StopCoroutine(_lastAudioSend); 
+                _lastAudioSend = null;
+            }
+            else
+            {
+                StartRecord();
+            }
         }
 
         if(Input.GetKeyUp(KeyCode.E))
         {
-            StartCoroutine( StopRecord());
+            _lastAudioSend = StartCoroutine(StopRecord());
         }
-        if (isRecording)
-        {
-            SendAudio();
-        }
-
     }
 
     private void StartRecord()
     {
-        _audioClip = Microphone.Start(null, true, RECORD_DURATION, SAMPLE_RATE);
         isRecording = true;
-        _lastSamplePosition = 0;
+        _lastSamplePosition = Microphone.GetPosition(null);
+        StartCoroutine(SendAudioPeriod());
     }
-
-
 
     private IEnumerator StopRecord() 
     {
-        yield return new WaitForSeconds(0.1f);
-        SendAudio();
-        Microphone.End(null);
-        isRecording= false;
+        yield return new WaitForSeconds(RECORD_DURATION / 2f);
+        isRecording = false;
+        _lastAudioSend= null;
+    }
+
+    private IEnumerator SendAudioPeriod()
+    {
+        while(isRecording)
+        {
+            SendAudio();
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
     private void SendAudio()
     {
+        Debug.Log(_audioClip is null);
         int currentSamplePos = Microphone.GetPosition(null);
         int SampleCount = currentSamplePos - _lastSamplePosition;
         if (SampleCount < 0) 
@@ -78,7 +92,6 @@ public class VoiceChat : NetworkBehaviour
 
             CmdSendAudio(byteArray);
         }
-
     }
 
     [Command]
@@ -90,7 +103,7 @@ public class VoiceChat : NetworkBehaviour
     [ClientRpc(includeOwner =false)]
     private void RpcReceiveData(byte[] audioData)
     {
-        float[] receivedData = new float[audioData.Length/4];
+        float[] receivedData = new float[audioData.Length / 4];
         Buffer.BlockCopy(audioData,0, receivedData, 0, audioData.Length);
         AudioClip receivedClip = AudioClip.Create("ReceivedAudio", receivedData.Length, 1, SAMPLE_RATE, false);
         receivedClip.SetData(receivedData, 0);

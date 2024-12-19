@@ -29,8 +29,7 @@ public class CameraRotation : MonoBehaviour
         _verticalRotation = Mathf.Clamp(_verticalRotation, -MAX_VERTICAL_ANGLE, MAX_VERTICAL_ANGLE);
         _horizontRotation = Mathf.Clamp(_horizontRotation, -MAX_HORIZONTAL_ANGLE, MAX_HORIZONTAL_ANGLE);
 
-        transform.localEulerAngles =new Vector3(_verticalRotation, _horizontRotation, 0);
-       
-
+        transform.localEulerAngles = new Vector3(_verticalRotation, _horizontRotation, 0);
+     
     }
 }
