@@ -15,6 +15,4 @@ public class SetCamPos : NetworkBehaviour
             cameraTransform.rotation = gameObject.transform.rotation;
         }
     }
-
-    
 }
