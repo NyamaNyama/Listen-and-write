@@ -5,11 +5,6 @@ using UnityEngine;
 public class InteractionManager : MonoBehaviour
 {
     private ClickableObject _currentHovered;
-    void Start()
-    {
-        
-    }
-
     void Update()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -25,6 +20,7 @@ public class InteractionManager : MonoBehaviour
                 }
                 if(Input.GetMouseButtonDown(0))
                 {
+                    _currentHovered?.OnHoverExit();
                     _currentHovered.OnClick();
                 }
             }
