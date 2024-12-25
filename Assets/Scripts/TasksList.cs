@@ -5,7 +5,6 @@ using UnityEngine;
 public class TasksList : ClickableObject
 {
     private const float MOVE_TIME = 0.3f;
-    private bool _isMoving = false;
     private bool _isInteract = false;
     private TransformSnapshot _oldTransform;
 
@@ -17,20 +16,20 @@ public class TasksList : ClickableObject
     public override void OnClick()
     {
         TransformSnapshot target;
+        Camera.main.GetComponent<CameraRotation>().enabled = _isInteract;
+
         if(_isInteract)
         {
-            Debug.Log("Пока");
             target =_oldTransform;
-               
         }
+
         else
         {
-            Debug.Log("Привет");
             target = new TransformSnapshot(Camera.main.transform.GetChild(0));
         }
+
         StopAllCoroutines();
         StartCoroutine(Moveble(target));
- 
     }
 
     private IEnumerator Moveble(TransformSnapshot target)
@@ -44,7 +43,5 @@ public class TasksList : ClickableObject
             transform.rotation = Quaternion.Lerp(transform.rotation,target.rotation, time/MOVE_TIME);
             yield return null;
         }
-
-       
     }
 }
