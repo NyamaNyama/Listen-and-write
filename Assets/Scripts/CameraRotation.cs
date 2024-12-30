@@ -11,14 +11,32 @@ public class CameraRotation : MonoBehaviour
 
     private const float MAX_VERTICAL_ANGLE = 90f;
     private const float MAX_HORIZONTAL_ANGLE = 90f;
-    void Start()
+
+    private bool isRotate;
+
+    private void Awake()
     {
-        
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked; 
+        GameEvents.OnObjectInteractionStart += StopRotatate;
+        GameEvents.OnObjectInteractionEnd += StartRotate;
     }
 
+    private void OnDestroy()
+    {
+        GameEvents.OnObjectInteractionStart -= StopRotatate;
+        GameEvents.OnObjectInteractionEnd -= StartRotate;
+    }
+    private void Start()
+    {
+        StartRotate();
+    }
+
+
     void Update()
+    {
+        if(isRotate) Rotate();
+    }
+
+    private void Rotate()
     {
         float inputX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
         float inputY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
@@ -30,6 +48,8 @@ public class CameraRotation : MonoBehaviour
         _horizontRotation = Mathf.Clamp(_horizontRotation, -MAX_HORIZONTAL_ANGLE, MAX_HORIZONTAL_ANGLE);
 
         transform.localEulerAngles = new Vector3(_verticalRotation, _horizontRotation, 0);
-     
     }
+
+    private void StopRotatate() => isRotate = false;
+    private void StartRotate() => isRotate = true;
 }

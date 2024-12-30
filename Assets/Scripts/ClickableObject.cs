@@ -14,5 +14,5 @@ public abstract class ClickableObject: MonoBehaviour
 
     }
 
-    public abstract void OnClick();
+    public abstract void OnClick(int mouseButton);
 }
