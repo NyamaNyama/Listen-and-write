@@ -3279,6 +3279,7 @@ GameObject:
   - component: {fileID: 2047393445}
   - component: {fileID: 2047393444}
   - component: {fileID: 2047393443}
+  - component: {fileID: 2047393447}
   - component: {fileID: 2047393446}
   m_Layer: 0
   m_Name: TasksList
@@ -3383,6 +3384,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8ceff76110bdce4d9a5ce1c7de0e99a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2047393447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2047393441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 313e5a04e02dbd5479a37ff2c603b865, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &2090975727
