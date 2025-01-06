@@ -8,7 +8,13 @@ public struct TransformSnapshot
     public Quaternion rotation { get; private set; }
     public TransformSnapshot(Transform obj)
     {
-        position = obj.position;
-        rotation = obj.rotation;
+        this.position = obj.position;
+        this.rotation = obj.rotation;
+    }
+
+    public TransformSnapshot(Vector3 position, Quaternion rotation)
+    {
+        this.position = position;
+        this.rotation = rotation;
     }
 }
