@@ -4,15 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Mover))]
-public class TasksList : ClickableObject
+public class InteractiveObject: ClickableObject
 {
     private const float MOVE_TIME = 0.3f;
     private TransformSnapshot _oldTransform;
     private Camera _mainCamera;
     private Mover _move;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         _oldTransform = new TransformSnapshot(this.transform);
         _mainCamera = Camera.main;
         _move = GetComponent<Mover>();
@@ -20,6 +21,7 @@ public class TasksList : ClickableObject
 
     public override void OnClick(int mouseButton)
     {
+        OnHoverExit();
         TransformSnapshot target;
         bool isRight = mouseButton == 1;
 

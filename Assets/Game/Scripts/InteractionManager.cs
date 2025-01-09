@@ -5,6 +5,7 @@ using UnityEngine;
 public class InteractionManager : MonoBehaviour
 {
     private ClickableObject _currentHovered;
+
     private Camera _mainCamera;
     private bool isInteract = false;
     private bool isDraging = false;
@@ -12,6 +13,8 @@ public class InteractionManager : MonoBehaviour
     private const float RIGHT_CLICK_DURATION = 0.3f;
     private const float ROTATION_SENSITIVITY = 0.2f;
     private Vector3 _lastMousePosition;
+    public static GameObject ActivePanel = null;
+
 
     private void Start()
     {
@@ -21,8 +24,7 @@ public class InteractionManager : MonoBehaviour
     {
         if (!isInteract)
         {
-            Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-            FindInteractObject(ray);
+            FindInteractObject();
             if (_currentHovered != null)
             {
                 if (Input.GetMouseButtonDown(0)) LeftClick();
@@ -37,9 +39,10 @@ public class InteractionManager : MonoBehaviour
         }
     }
 
-    private void FindInteractObject(Ray CameraRay)
+    private void FindInteractObject()
     {
-        if (Physics.Raycast(CameraRay, out RaycastHit hit))
+        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit))
         {
             if (hit.collider.TryGetComponent(out ClickableObject obj))
             {
@@ -66,18 +69,26 @@ public class InteractionManager : MonoBehaviour
     }
     private void RightClickEnd()
     {
-        if(Time.time - _rightClickDurationStart <= RIGHT_CLICK_DURATION && !isDraging)
+        if(ActivePanel != null)
         {
-            GameEvents.TriggerInteracionEnd();
-            _currentHovered.OnClick(1);
-            isInteract = false;
+            ActivePanel.SetActive(false);
+            ActivePanel = null;
         }
-        _rightClickDurationStart = -1f;
+        else
+        {
+            if (Time.time - _rightClickDurationStart <= RIGHT_CLICK_DURATION && !isDraging)
+            {
+                GameEvents.TriggerInteracionEnd();
+                _currentHovered.OnClick(1);
+                isInteract = false;
+            }
+            _rightClickDurationStart = -1f;
+        }
+        
     }
     private void LeftClick()
     {
         GameEvents.TriggerInteracionStart();
-        _currentHovered.OnHoverExit();
         _currentHovered.OnClick(0);
         isInteract = true;
     }
@@ -85,7 +96,7 @@ public class InteractionManager : MonoBehaviour
     private void ObjectRotate()
     {
         Vector3 currentMousePosition = Input.mousePosition;
-        if(Vector3.Distance(currentMousePosition, _lastMousePosition) > 0.1f)
+        if(Vector3.Distance(currentMousePosition, _lastMousePosition) > 0.3f)
         {
             isDraging = true;
 
@@ -95,8 +106,6 @@ public class InteractionManager : MonoBehaviour
             float rotationY = -mouseDelta.x * ROTATION_SENSITIVITY;
             _currentHovered.transform.Rotate(Vector3.up, rotationY, Space.World); 
             _currentHovered.transform.Rotate(Vector3.right, rotationX, Space.World); 
-
-            _lastMousePosition = currentMousePosition;
 
             _lastMousePosition = currentMousePosition;
         }

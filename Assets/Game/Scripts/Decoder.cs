@@ -5,28 +5,31 @@ using UnityEngine.UI;
 
 public class Decoder 
 {
-    private List<string> operators;
-    private List<int> numbers;
+    private List<char> operators;
+    private List<char> numbers;
     private List<Sprite > numberSprites;
     private List<Sprite> operatorSprites;
-    private Dictionary<string,Sprite> trueDecoder;
-    private List<Dictionary<string, Sprite>> fakeDecoders;
+    private Dictionary<char,Sprite> trueDecoder;
+    private List<Dictionary<char, Sprite>> fakeDecoders;
     private int decoderCount;
 
-    public Dictionary<string, Sprite> GetTrueDecoder()
+    public Dictionary<char, Sprite> GetTrueDecoder()
     {
-        return new Dictionary<string, Sprite>(trueDecoder);
+        return new Dictionary<char, Sprite>(trueDecoder);
     }
 
-    public Decoder(Example example, List<Sprite> numberSprites,List<Sprite> operatorSprites, int decoderCount)
+    public Decoder(ExampleValues values , int decoderCount)
     {
-        operators = example.GetOperatorsCopy();
-        numbers = example.GetNumbersCopy();
-        this.numberSprites = numberSprites;
+        operators = new List<char>(values.Operators);
+        numbers = new List<char>(values.Numbers);
+
+        numberSprites = new List<Sprite>(values.NumbersSprite);
+        operatorSprites = new List<Sprite>(values.OperatorsSprite);
+
         this.decoderCount = decoderCount;
-        this.operatorSprites = operatorSprites;
-        trueDecoder = new Dictionary<string, Sprite>();
-        fakeDecoders = new List<Dictionary<string, Sprite>>();
+
+        trueDecoder = new Dictionary<char, Sprite>();
+        fakeDecoders = new List<Dictionary<char, Sprite>>();
     }
 
     private void ShuffleAll()
@@ -38,7 +41,7 @@ public class Decoder
     {
         for (int i = 0; i < decoderCount; i++)
         {
-            Dictionary<string, Sprite> newDecoder = CreateDecoder();
+            Dictionary<char, Sprite> newDecoder = CreateDecoder();
             if (i == 0)
             {
                 trueDecoder = newDecoder;
@@ -54,13 +57,13 @@ public class Decoder
         }
     }
 
-    private Dictionary<string, Sprite> CreateDecoder()
+    private Dictionary<char, Sprite> CreateDecoder()
     {
         ShuffleAll();
-        Dictionary<string, Sprite> decoder = new Dictionary<string, Sprite>();
+        Dictionary<char, Sprite> decoder = new Dictionary<char, Sprite>();
         for (int j = 0; j < numbers.Count; j++)
         {
-            decoder[numbers[j].ToString()] = numberSprites[j];
+            decoder[numbers[j]] = numberSprites[j];
         }
         for (int k = 0; k < operators.Count; k++)
         {
@@ -69,7 +72,7 @@ public class Decoder
         return decoder;
     }
 
-    private bool IsDecoderDuplicate(Dictionary<string, Sprite> newDecoder)
+    private bool IsDecoderDuplicate(Dictionary<char, Sprite> newDecoder)
     {
         if (AreDecoderEqual(trueDecoder, newDecoder)) return true;
         foreach(var decoder in fakeDecoders)
@@ -79,7 +82,7 @@ public class Decoder
         return false;
     }
 
-    private bool AreDecoderEqual(Dictionary<string, Sprite> decoder1, Dictionary<string, Sprite> decoder2)
+    private bool AreDecoderEqual(Dictionary<char, Sprite> decoder1, Dictionary<char, Sprite> decoder2)
     {
         foreach (var pair in decoder1)
         {
